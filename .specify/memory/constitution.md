@@ -1,9 +1,9 @@
 <!--
 Laporan Dampak Sinkronisasi:
-- Perubahan Versi: 1.0.0 → 1.1.0
+- Perubahan Versi: 1.1.0 → 1.2.0
 - Prinsip Dimodifikasi:
-  - II. Desain Frontend, UX & Aksesibilitas (Diperluas dengan Sistem Desain, Teknologi Wajib, Dark Mode, dan Aksesibilitas)
-- Bagian Ditambahkan: T/A
+  - V. Stack Teknologi & Infrastruktur (Baru: Mandat Supabase, Drizzle, Zod, Email, dan Multi-Tenancy)
+- Bagian Ditambahkan: Prinsip V
 - Bagian Dihapus: T/A
 - Status Template:
   - .specify/templates/plan-template.md: ✅ Kompatibel
@@ -51,6 +51,15 @@ Laporan Dampak Sinkronisasi:
 - **Komponen Server**: Utamakan Next.js Server Components untuk pengambilan data dan rendering berat guna mengurangi ukuran bundle klien.
 - **Optimasi**: Optimalkan gambar, font, dan skrip. Lazy load komponen non-kritis.
 
+### V. Stack Teknologi & Infrastruktur
+
+**Gunakan stack yang telah ditentukan untuk menjamin integrasi dan skalabilitas.**
+
+- **Backend & Database**: Wajib menggunakan **Supabase** (PostgreSQL, Auth) dan **Drizzle ORM** untuk manajemen data.
+- **Validasi Data**: Gunakan **Zod** untuk validasi skema runtime (frontend & backend).
+- **Email System**: Gunakan **React Email** untuk template dan **Nodemailer** atau **Resend** untuk pengiriman.
+- **Multi-Tenancy**: Arsitektur harus mendukung isolasi data berbasis organisasi (organization-based isolation) sejak awal.
+
 ## Tata Kelola
 
 ### Proses Amandemen
@@ -65,4 +74,4 @@ Laporan Dampak Sinkronisasi:
 - **Code Review**: PR harus diverifikasi terhadap prinsip Kualitas Kode dan Desain.
 - **Panduan Runtime**: Lihat `README.md` dan `.specify/templates/` untuk detail operasional.
 
-**Versi**: 1.1.0 | **Diratifikasi**: 2026-01-27 | **Terakhir Diamandemen**: 2026-01-27
+**Versi**: 1.2.0 | **Diratifikasi**: 2026-01-27 | **Terakhir Diamandemen**: 2026-01-27

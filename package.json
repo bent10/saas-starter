@@ -1,5 +1,6 @@
 {
   "name": "saas-starter",
+  "description": "Fondasi siap produksi yang skalabel untuk membangun aplikasi SaaS modern.",
   "version": "0.1.0",
   "private": true,
   "scripts": {

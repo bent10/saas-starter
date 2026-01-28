@@ -1,59 +1,68 @@
 <!--
-Sync Impact Report:
-- Version change: Template → 1.0.0
-- Principles Established:
-  - Code Quality & Style (from Prettier config + Context)
-  - Frontend Design & UX (from User Input)
-  - Testing & Reliability (New)
-  - Performance & Scalability (New)
-- Added Sections: N/A
-- Removed Sections: N/A
-- Templates Status:
-  - .specify/templates/plan-template.md: ✅ Compatible (has Constitution Check)
-  - .specify/templates/spec-template.md: ✅ Compatible
-  - .specify/templates/tasks-template.md: ✅ Compatible
+Laporan Dampak Sinkronisasi:
+- Perubahan Versi: 1.0.0 → 1.1.0
+- Prinsip Dimodifikasi:
+  - II. Desain Frontend, UX & Aksesibilitas (Diperluas dengan Sistem Desain, Teknologi Wajib, Dark Mode, dan Aksesibilitas)
+- Bagian Ditambahkan: T/A
+- Bagian Dihapus: T/A
+- Status Template:
+  - .specify/templates/plan-template.md: ✅ Kompatibel
+  - .specify/templates/spec-template.md: ✅ Kompatibel
+  - .specify/templates/tasks-template.md: ✅ Kompatibel
 -->
-# saas-starter Constitution
 
-## Core Principles
+# Konstitusi saas-starter
 
-### I. Code Quality & Style
-**Code must be consistent, readable, and strictly typed.**
-- **Formatting**: Strictly adhere to the project's Prettier configuration (single quotes, no semi, 2-space tab width).
-- **Type Safety**: TypeScript strict mode is mandatory. No explicit `any` without documented justification.
-- **Linting**: ESLint errors must be resolved before merging. Zero-tolerance for warnings in CI.
-- **Module System**: Use ESM (`import`/`export`) exclusively. Dynamic imports for lazy loading where beneficial.
+## Prinsip Utama
 
-### II. Frontend Design & UX
-**Create distinctive, production-grade interfaces that avoid generic "AI slop" aesthetics.**
-- **Bold Aesthetic**: Commit to a clear conceptual direction (minimalist, maximalist, industrial, etc.). Avoid generic choices.
-- **Typography & Color**: Use distinctive fonts and cohesive, high-contrast color palettes.
-- **Motion & Depth**: Utilize animations (CSS/Motion) for delight. Use layering, shadows, and spatial composition to create depth.
-- **Mobile-First**: Designs must be responsive and fully functional on mobile devices first, then scale up.
-- **Detail**: Meticulous attention to spacing, negative space, and micro-interactions.
+### I. Kualitas Kode & Gaya
 
-### III. Testing & Reliability
-**Reliability is non-negotiable for a scalable SaaS.**
-- **Critical Paths**: User authentication, payments, and core business logic MUST have automated test coverage.
-- **Test-First Mindset**: Tests SHOULD be written or planned before implementation for complex logic.
-- **Regression**: New features MUST NOT break existing functionality. Run relevant test suites before pushing.
+**Kode harus konsisten, mudah dibaca, dan bertipe ketat.**
 
-### IV. Performance & Scalability
-**Performance is a feature; the application must remain fast as it grows.**
-- **Web Vitals**: Aim for green Core Web Vitals (LCP, CLS, INP).
-- **Server Components**: Prefer Next.js Server Components for data fetching and heavy rendering to reduce client bundle size.
-- **Optimization**: Optimize images, fonts, and scripts. Lazy load non-critical components.
+- **Pemformatan**: Patuhi konfigurasi Prettier proyek secara ketat (single quotes, tanpa titik koma, lebar tab 2 spasi).
+- **Keamanan Tipe**: TypeScript strict mode wajib. Tidak boleh ada `any` eksplisit tanpa justifikasi yang terdokumentasi.
+- **Linting**: Kesalahan (error) ESLint harus diselesaikan sebelum penggabungan (merge). Tidak ada toleransi untuk peringatan (warnings) di CI.
+- **Sistem Modul**: Gunakan ESM (`import`/`export`) secara eksklusif. Gunakan impor dinamis untuk lazy loading jika bermanfaat.
 
-## Governance
+### II. Desain Frontend, UX & Aksesibilitas
 
-### Amendment Process
-- Proposed changes to this constitution must be reviewed by the project lead.
-- Changes to "Core Principles" require a MINOR version bump.
-- Clarifications or non-semantic updates require a PATCH version bump.
+**Ciptakan antarmuka produksi yang inklusif, konsisten, dan berestetika tinggi.**
 
-### Compliance
-- **Plan Phase**: Every feature plan must explicitly check against these principles in the "Constitution Check" section.
-- **Code Review**: PRs must be verified against Code Quality and Design principles.
-- **Runtime Guidance**: Refer to `README.md` and `.specify/templates/` for operational details.
+- **Stack Teknologi UI**: Wajib menggunakan **shadcn/ui** sebagai basis komponen, **Tailwind CSS** untuk styling, dan **Lucide Icons**.
+- **Sistem Desain & Tema**: Implementasikan sistem desain yang skalabel. Dukungan **Light & Dark Mode** (dengan toggle dan persistensi) adalah WAJIB.
+- **Aksesibilitas (A11y)**: Penuhi standar aksesibilitas dasar. Pastikan navigasi keyboard, state fokus yang jelas, dan rasio kontras warna yang memadai.
+- **Estetika Berani (Bold)**: Berkomitmen pada arah konseptual yang jelas. Hindari pilihan generik "AI slop". Gunakan tipografi khas dan palet warna kohesif.
+- **Mobile-First & Responsif**: Desain harus adaptif untuk mobile, tablet, dan desktop. Mulai dari layar terkecil (mobile-first).
+- **Gerakan & Kedalaman**: Gunakan animasi (CSS/Motion) dan komposisi spasial (layering, bayangan) untuk meningkatkan pengalaman pengguna.
 
-**Version**: 1.0.0 | **Ratified**: 2026-01-27 | **Last Amended**: 2026-01-27
+### III. Pengujian & Keandalan
+
+**Keandalan tidak dapat ditawar untuk SaaS yang skalabel.**
+
+- **Jalur Kritis**: Autentikasi pengguna, pembayaran, dan logika bisnis inti HARUS memiliki cakupan pengujian otomatis.
+- **Pola Pikir Test-First**: Pengujian SEHARUSNYA ditulis atau direncanakan sebelum implementasi untuk logika yang kompleks.
+- **Regresi**: Fitur baru TIDAK BOLEH merusak fungsionalitas yang ada. Jalankan rangkaian pengujian yang relevan sebelum melakukan push.
+
+### IV. Performa & Skalabilitas
+
+**Performa adalah fitur; aplikasi harus tetap cepat saat berkembang.**
+
+- **Web Vitals**: Targetkan Core Web Vitals hijau (LCP, CLS, INP).
+- **Komponen Server**: Utamakan Next.js Server Components untuk pengambilan data dan rendering berat guna mengurangi ukuran bundle klien.
+- **Optimasi**: Optimalkan gambar, font, dan skrip. Lazy load komponen non-kritis.
+
+## Tata Kelola
+
+### Proses Amandemen
+
+- Perubahan yang diusulkan pada konstitusi ini harus ditinjau oleh pimpinan proyek.
+- Perubahan pada "Prinsip Utama" memerlukan kenaikan versi MINOR.
+- Klarifikasi atau pembaruan non-semantik memerlukan kenaikan versi PATCH.
+
+### Kepatuhan
+
+- **Fase Perencanaan**: Setiap rencana fitur harus secara eksplisit memeriksa prinsip-prinsip ini di bagian "Cek Konstitusi".
+- **Code Review**: PR harus diverifikasi terhadap prinsip Kualitas Kode dan Desain.
+- **Panduan Runtime**: Lihat `README.md` dan `.specify/templates/` untuk detail operasional.
+
+**Versi**: 1.1.0 | **Diratifikasi**: 2026-01-27 | **Terakhir Diamandemen**: 2026-01-27

@@ -1,84 +1,84 @@
-# GEMINI.md - Context & Instructions
+# GEMINI.md - Konteks & Instruksi
 
-## Project Overview
+## Gambaran Umum Proyek
 
-**Name:** `saas-starter`
-**Description:** A scalable, production-ready foundation for building modern SaaS applications.
-**Goal:** To accelerate SaaS development by providing essential features like authentication, multi-tenancy, billing, and a solid UI system.
+**Nama:** `saas-starter`
+**Deskripsi:** Fondasi siap produksi yang skalabel untuk membangun aplikasi SaaS modern.
+**Tujuan:** Untuk mempercepat pengembangan SaaS dengan menyediakan fitur-fitur esensial seperti autentikasi, multi-tenancy, billing, dan sistem UI yang solid.
 
-## Tech Stack & Configuration
+## Tech Stack & Konfigurasi
 
-This project is configured as an **ESM module** (`"type": "module"`).
+Proyek ini dikonfigurasi sebagai **modul ESM** (`"type": "module"`).
 
-### Core
+### Inti
 
 - **Framework:** Next.js 16.1.4 (App Router)
-- **Language:** TypeScript v5 (Strict Mode required)
+- **Bahasa:** TypeScript v5 (Wajib Strict Mode)
 - **Runtime:** Node.js (ESM)
 
 ### Frontend & UI
 
 - **Styling:** Tailwind CSS v4
-- **Components:** shadcn/ui (New York style)
-- **Icons:** Lucide React
-- **Theming:** `next-themes` (Dark/Light mode support required)
+- **Komponen:** shadcn/ui (Gaya New York)
+- **Ikon:** Lucide React
+- **Tema:** `next-themes` (Wajib mendukung mode Gelap/Terang)
 - **Utils:** `clsx`, `tailwind-merge`
 
-### Backend & Data (Planned/Mandated)
+### Backend & Data (Direncanakan/Diwajibkan)
 
-_Note: These dependencies are mandated by the project Constitution but may not yet be installed in `package.json`._
+_Catatan: Dependensi ini diwajibkan oleh Konstitusi proyek tetapi mungkin belum terinstall di `package.json`._
 
 - **Database:** Supabase (PostgreSQL)
 - **ORM:** Drizzle ORM
-- **Validation:** Zod
-- **Email:** React Email with Nodemailer/Resend
+- **Validasi:** Zod
+- **Email:** React Email dengan Nodemailer/Resend
 
-## Development Standards (Constitution)
+## Standar Pengembangan (Konstitusi)
 
-Adhere strictly to the rules defined in `.specify/memory/constitution.md`.
+Patuhi dengan ketat aturan yang didefinisikan dalam `.specify/memory/constitution.md`.
 
-1.  **Code Quality:**
-    - **Strict TypeScript:** No implicit `any`. Explicit `any` requires justification.
-    - **ESM Only:** Use `import`/`export`.
-    - **Linting:** Zero tolerance for ESLint errors or warnings in CI.
-    - **Formatting:** Prettier (single quotes, no semi, 2-space tab).
+1.  **Kualitas Kode:**
+    - **Strict TypeScript:** Tidak boleh ada `any` implisit. `any` eksplisit memerlukan justifikasi.
+    - **Hanya ESM:** Gunakan `import`/`export`.
+    - **Linting:** Toleransi nol untuk error atau warning ESLint di CI.
+    - **Pemformatan:** Prettier (tanda kutip tunggal, tanpa titik koma, tab 2 spasi).
 
 2.  **UI/UX:**
-    - **Shadcn/UI:** Must use as the component base.
-    - **Responsiveness:** Mobile-first approach.
-    - **Accessibility:** Mandatory keyboard navigation and contrast compliance.
+    - **Shadcn/UI:** Harus digunakan sebagai basis komponen.
+    - **Responsivitas:** Pendekatan mobile-first.
+    - **Aksesibilitas:** Wajib mematuhi navigasi keyboard dan kontras.
 
-3.  **Architecture:**
-    - **Next.js App Router:** Use Server Components by default.
-    - **Multi-Tenancy:** Architecture must support organization-based data isolation.
+3.  **Arsitektur:**
+    - **Next.js App Router:** Gunakan Server Components secara default.
+    - **Multi-Tenancy:** Arsitektur harus mendukung isolasi data berbasis organisasi.
 
-## Project Structure
+## Struktur Proyek
 
 ```text
 /
-├── app/                 # Next.js App Router pages and layouts
+├── app/                 # Halaman dan layout Next.js App Router
 ├── components/
-│   └── ui/              # shadcn/ui components
+│   └── ui/              # Komponen shadcn/ui
 ├── lib/
-│   └── utils.ts         # Utility functions (cn helper)
-├── .specify/            # Project rules, memory, and templates
-├── .gemini/             # AI Agent configuration
-├── next.config.ts       # Next.js configuration
-├── package.json         # Project dependencies and scripts
-└── README.md            # Product Requirements Document (PRD)
+│   └── utils.ts         # Fungsi utilitas (cn helper)
+├── .specify/            # Aturan proyek, memori, dan template
+├── .gemini/             # Konfigurasi AI Agent
+├── next.config.ts       # Konfigurasi Next.js
+├── package.json         # Dependensi dan skrip proyek
+└── README.md            # Dokumen Kebutuhan Produk (PRD)
 ```
 
-## Key Commands
+## Perintah Utama
 
-| Command         | Description                          |
-| :-------------- | :----------------------------------- |
-| `npm run dev`   | Start the development server         |
-| `npm run build` | Build the application for production |
-| `npm run start` | Start the production server          |
-| `npm run lint`  | Run ESLint                           |
+| Perintah        | Deskripsi                         |
+| :-------------- | :-------------------------------- |
+| `npm run dev`   | Menjalankan server pengembangan   |
+| `npm run build` | Membangun aplikasi untuk produksi |
+| `npm run start` | Menjalankan server produksi       |
+| `npm run lint`  | Menjalankan ESLint                |
 
-## Current Status & Next Steps
+## Status Saat Ini & Langkah Selanjutnya
 
-- **Frontend Scaffolding:** Complete with Next.js 16, Tailwind v4, and Shadcn UI.
-- **Backend Setup:** **Pending.** Supabase and Drizzle are defined in the requirements but missing from `package.json`.
-- **Immediate Task:** The project is in the "starter" phase. Future tasks will likely involve integrating the backend stack (Supabase/Drizzle) and implementing the authentication/multi-tenancy features described in the README.
+- **Scaffolding Frontend:** Selesai dengan Next.js 16, Tailwind v4, dan Shadcn UI.
+- **Setup Backend:** **Pending.** Supabase dan Drizzle didefinisikan dalam kebutuhan tetapi belum ada di `package.json`.
+- **Tugas Mendesak:** Proyek berada dalam fase "starter". Tugas selanjutnya kemungkinan akan melibatkan integrasi stack backend (Supabase/Drizzle) dan mengimplementasikan fitur autentikasi/multi-tenancy yang dijelaskan dalam README.

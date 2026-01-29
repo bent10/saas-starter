@@ -82,3 +82,10 @@ Patuhi dengan ketat aturan yang didefinisikan dalam `.specify/memory/constitutio
 - **Scaffolding Frontend:** Selesai dengan Next.js 16, Tailwind v4, dan Shadcn UI.
 - **Setup Backend:** **Pending.** Supabase dan Drizzle didefinisikan dalam kebutuhan tetapi belum ada di `package.json`.
 - **Tugas Mendesak:** Proyek berada dalam fase "starter". Tugas selanjutnya kemungkinan akan melibatkan integrasi stack backend (Supabase/Drizzle) dan mengimplementasikan fitur autentikasi/multi-tenancy yang dijelaskan dalam README.
+
+## Active Technologies
+- TypeScript v5 (Strict), Node.js (ESM) + Next.js 16.1.4 (App Router), Supabase (Auth, DB, Storage), Drizzle ORM, Zod, Stripe, React Email/Resend, next-intl, Playwright. (001-saas-starter-core)
+- PostgreSQL (Supabase), Supabase Storage. (001-saas-starter-core)
+
+## Recent Changes
+- 001-saas-starter-core: Added TypeScript v5 (Strict), Node.js (ESM) + Next.js 16.1.4 (App Router), Supabase (Auth, DB, Storage), Drizzle ORM, Zod, Stripe, React Email/Resend, next-intl, Playwright.

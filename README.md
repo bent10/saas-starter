@@ -1,161 +1,67 @@
-# Dokumen Kebutuhan Produk (PRD)
+# SaaS Starter
 
-## Gambaran Umum
+Production-ready foundation for building modern SaaS applications.
 
-### Nama Produk
+## Features Implemented
 
-SaaS Starter Template
+- **Authentication**: Email/Password Sign-up, Sign-in, Sign-out via Supabase Auth.
+- **Multi-Tenancy**: Organization creation, Member invitation, Role management (Owner/Member).
+- **Billing**: Stripe Subscription integration (Checkout, Portal, Webhooks).
+- **UI/UX**: Dashboard layout, Sidebar, Dark Mode, Mobile responsiveness.
+- **Tech Stack**: Next.js 16 (App Router), Tailwind v4, Drizzle ORM, Supabase, Stripe, Shadcn UI.
 
-### Tujuan
+## Getting Started
 
-SaaS Starter Template adalah fondasi siap produksi yang skalabel untuk membangun aplikasi SaaS modern. Template ini menyediakan fitur-fitur esensial seperti autentikasi, multi-tenancy, billing, serta sistem UI yang solid, sehingga tim dapat fokus pada diferensiasi produk alih-alih membangun infrastruktur dari nol.
+### Prerequisites
 
-### Tujuan Utama
+- Node.js 20+
+- Supabase Project
+- Stripe Account
 
-- Mempercepat pengembangan produk SaaS
-- Menyediakan arsitektur yang aman dan mudah diskalakan
-- Menetapkan standar kualitas kode dan pengalaman pengguna (UX)
-- Mendukung berbagai model monetisasi
+### Environment Variables
 
-### Batasan (Non-Goals)
+Create `.env.local`:
 
-- Membangun produk SaaS yang spesifik pada satu domain
-- Menyediakan logika bisnis kustom untuk semua use case
+```env
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key (for admin tasks)
 
-## Target Pengguna
+DATABASE_URL=postgres://postgres:[password]@db.[ref].supabase.co:5432/postgres
 
-### Pengguna Utama
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+NEXT_PUBLIC_STRIPE_PRO_PRICE_ID=price_...
 
-- Indie hacker
-- Tim startup
-- Product engineer
-- Technical founder
+RESEND_API_KEY=re_... (optional for now, used by Auth)
+```
 
-### Pengguna Sekunder
+### Installation
 
-- Agensi yang membangun produk SaaS untuk klien
-- Tim produk internal
+```bash
+npm install
+```
 
-## Fitur Utama
+### Database Setup
 
-### Autentikasi
+1. Push schema to Supabase:
+   ```bash
+   npm run db:push
+   ```
+2. Enable RLS policies (SQL provided in `shared/lib/db/rls.sql`).
 
-- Autentikasi menggunakan email & password
-- Verifikasi email dan pemulihan password
-- Social sign-in (Google, Microsoft; dapat diperluas)
-- Multi-Factor Authentication (MFA/2FA berbasis TOTP)
-- Manajemen sesi dan kontrol keamanan
+### Running Development Server
 
-### Multi-Tenancy (Organisasi)
+```bash
+npm run dev
+```
 
-- Isolasi data berbasis organisasi
-- Manajemen anggota (tambah/hapus anggota)
-- Sistem undangan dengan penetapan role
-- Role-Based Access Control (RBAC)
-- Transfer kepemilikan organisasi antar anggota
+## Testing
 
-### Billing & Pembayaran
+Run E2E tests with Playwright:
 
-- Proses pembayaran yang aman
-- Manajemen langganan (upgrade, downgrade, pembatalan)
-- Portal billing dengan invoice dan riwayat transaksi
-- Pembatasan fitur berdasarkan paket langganan
-- Skema billing per organisasi atau per seat
-- Billing berbasis pemakaian (kredit & metered usage)
-
-### Dashboard
-
-- Dashboard untuk pengguna terautentikasi
-- Ringkasan tingkat organisasi
-- Visibilitas penggunaan dan billing
-- Akses cepat ke pengaturan dan aksi utama
-
-### Design System & UI
-
-- Komponen design system yang reusable
-- Desain responsif (mobile, tablet, desktop)
-- Dukungan tema terang dan gelap
-- Dibangun dengan shadcn/ui, Tailwind CSS, dan Lucide Icons
-- Komponen yang memperhatikan aspek aksesibilitas
-
-### Pengaturan
-
-- Manajemen profil pengguna
-- Pengaturan organisasi
-- Preferensi tema dan bahasa
-- Pengaturan email dan notifikasi
-
-### Dokumentasi
-
-- Dokumentasi berfokus pada developer
-- Panduan setup dan deployment
-- Panduan arsitektur dan ekstensi
-
-## User Stories (Contoh)
-
-- Sebagai pengguna, saya ingin mendaftar menggunakan email atau Google agar dapat mengakses aplikasi dengan cepat.
-- Sebagai pemilik organisasi, saya ingin mengundang anggota tim dan menetapkan peran.
-- Sebagai pelanggan berbayar, saya ingin melihat invoice dan mengelola langganan saya.
-- Sebagai developer, saya ingin design system yang konsisten agar bisa membangun fitur lebih cepat.
-
-## Kebutuhan Fungsional
-
-- Seluruh akses data harus dibatasi berdasarkan pengguna dan organisasi yang terautentikasi
-- Hak akses berbasis role harus diterapkan di frontend dan backend
-- Status billing harus secara konsisten mengontrol akses fitur
-- UI harus responsif dan mendukung pergantian tema
-
-## Kebutuhan Non-Fungsional
-
-### Performa
-
-- Waktu muat awal dan navigasi yang cepat
-- Query database dan API yang efisien
-
-### Keamanan
-
-- Autentikasi dan manajemen sesi yang aman
-- Isolasi data antar tenant
-- Penanganan data pembayaran yang aman
-
-### Skalabilitas
-
-- Mendukung pertumbuhan jumlah pengguna dan organisasi
-- Arsitektur modular untuk pengembangan fitur lanjutan
-
-### Maintainability
-
-- Kode yang bersih dan terdokumentasi dengan baik
-- Strong typing dan validasi skema
-
-## Tech Stack
-
-- **Frontend:** Next.js (App Router)
-- **Styling:** Tailwind CSS
-- **UI Components:** shadcn/ui
-- **Database & Autentikasi:** Supabase self-hosted (PostgreSQL)
-- **ORM:** Drizzle ORM
-- **Validasi:** Zod
-- **Email:** react.email, Nodemailer atau Resend
-- **Icons:** Lucide Icons
-- **AI/Tools:** Gemini CLI (untuk vibe coding)
-
-## Metrik Keberhasilan
-
-- Waktu menuju deployment produksi pertama
-- Tingkat adopsi dan penggunaan oleh developer
-- Kelengkapan fitur dibanding roadmap
-- Stabilitas sistem dan tingkat error
-
-## Pertanyaan Terbuka
-
-- Payment provider apa yang akan didukung pada tahap awal?
-- Definisi role default dan tingkat granularitas permission?
-- Sejauh mana fitur berbasis AI akan diterapkan di versi awal?
-
-## Pertimbangan Masa Depan
-
-- Sistem plugin atau ekstensi
-- Analitik dan pelaporan lanjutan
-- Marketplace integrasi
-- Workflow berbasis AI yang lebih mendalam
+```bash
+npx playwright test
+```

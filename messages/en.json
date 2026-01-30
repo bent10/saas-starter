@@ -1,0 +1,24 @@
+{
+  "HomePage": {
+    "title": "SaaS Starter"
+  },
+  "Auth": {
+    "login_title": "Welcome back",
+    "login_subtitle": "Enter your email to sign in to your account",
+    "register_title": "Create an account",
+    "register_subtitle": "Enter your email below to create your account",
+    "email_label": "Email",
+    "password_label": "Password",
+    "login_button": "Sign In",
+    "register_button": "Sign Up",
+    "forgot_password": "Forgot password?",
+    "dont_have_account": "Don't have an account? Sign up",
+    "already_have_account": "Already have an account? Sign in"
+  },
+  "Org": {
+    "create_title": "Create Organization",
+    "create_subtitle": "Create an organization to start using the platform",
+    "org_name_label": "Organization Name",
+    "create_button": "Create Organization"
+  }
+}

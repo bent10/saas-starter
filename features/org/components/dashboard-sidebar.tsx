@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { cn } from '@/shared/lib/utils';
-import { LayoutDashboard, Users, Settings, CreditCard } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, CreditCard, LogOut } from 'lucide-react';
 import { OrgSwitcher } from './org-switcher';
+import { signOutAction } from '@/features/auth/actions/auth-actions';
 
 type Org = {
   id: string;
@@ -75,6 +76,16 @@ export function DashboardSidebar({
            </Link>
          ))}
        </nav>
+
+       <div className="mt-auto">
+         <button
+           onClick={() => signOutAction()}
+           className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors text-muted-foreground hover:bg-muted w-full text-left"
+         >
+           <LogOut className="h-4 w-4" />
+           Logout
+         </button>
+       </div>
     </div>
   );
 }

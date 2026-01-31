@@ -89,7 +89,7 @@ export async function signInWithGoogle() {
   }
 }
 
-export async function signOut() {
+export async function signOutAction() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");

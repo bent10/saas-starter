@@ -1,91 +1,134 @@
-import { acceptInvitation } from '@/features/org/actions/org-actions';
-import { signOut } from '@/features/auth/actions/auth-actions';
-import { db } from '@/shared/lib/db/drizzle';
-import { createClient } from '@/shared/lib/supabase/server';
-import { Button } from '@/shared/components/ui/button';
-import { notFound, redirect } from 'next/navigation';
-import { getLocale } from 'next-intl/server';
-import Link from 'next/link';
+'use client'
 
-export default async function InvitePage({ params }: { params: Promise<{ token: string }> }) {
-  const { token } = await params;
-  const locale = await getLocale();
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+import { useTransition, use } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { acceptInvitation } from '@/features/org/actions/invitation-actions'
+import { acceptInvitationSchema } from '@/features/org/schemas'
+import { z } from 'zod'
+import { Button } from '@/shared/components/ui/button'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/shared/components/ui/form'
+import { Input } from '@/shared/components/ui/input'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/shared/components/ui/card'
+import { Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
-  const invitation = await db.query.invitations.findFirst({
-      where: (invitations, { eq }) => eq(invitations.token, token),
-      with: {
-          organization: true,
+export default function InvitePage({
+  params
+}: {
+  params: Promise<{ token: string }>
+}) {
+  const { token } = use(params)
+  const [isPending, startTransition] = useTransition()
+  const router = useRouter()
+
+  const form = useForm<z.infer<typeof acceptInvitationSchema>>({
+    resolver: zodResolver(acceptInvitationSchema),
+    defaultValues: {
+      token,
+      method: 'password',
+      password: ''
+    }
+  })
+
+  const onGoogleAccept = () => {
+    startTransition(async () => {
+      await acceptInvitation({ token, method: 'google' })
+    })
+  }
+
+  const onSubmit = (data: z.infer<typeof acceptInvitationSchema>) => {
+    startTransition(async () => {
+      const result = await acceptInvitation(data)
+      if (result.error) {
+        toast.error(result.error)
+      } else {
+        toast.success('Invitation accepted')
+        router.push('/dashboard')
       }
-  });
-
-  if (!invitation) {
-      return (
-          <div className="flex flex-col items-center justify-center min-h-screen p-4">
-              <h1 className="text-2xl font-bold mb-4">Invalid Invitation</h1>
-              <p className="text-muted-foreground mb-4">This invitation does not exist or has expired.</p>
-              <Button asChild>
-                  <Link href="/">Go Home</Link>
-              </Button>
-          </div>
-      )
+    })
   }
-
-  if (new Date() > invitation.expiresAt) {
-       return (
-          <div className="flex flex-col items-center justify-center min-h-screen p-4">
-              <h1 className="text-2xl font-bold mb-4">Invitation Expired</h1>
-              <p className="text-muted-foreground mb-4">This invitation has expired.</p>
-               <Button asChild>
-                  <Link href="/">Go Home</Link>
-              </Button>
-          </div>
-      )
-  }
-
-  if (!user) {
-      redirect(`/${locale}/login`);
-  }
-
-  if (user.email !== invitation.email) {
-       return (
-          <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
-              <h1 className="text-2xl font-bold mb-4">Wrong Account</h1>
-              <p className="text-muted-foreground mb-6">
-                This invitation was sent to <strong>{invitation.email}</strong>,<br/>
-                but you are logged in as <strong>{user.email}</strong>.
-              </p>
-              <form action={signOut}>
-                 <Button variant="outline">Sign out</Button>
-              </form>
-          </div>
-      )
-  }
-  
-  const acceptAction = async () => {
-    'use server';
-    await acceptInvitation(token);
-  };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-muted/20">
-        <div className="w-full max-w-md space-y-6 bg-background p-8 rounded-xl border shadow-sm text-center">
-            <div className="space-y-2">
-                <h1 className="text-2xl font-bold tracking-tight">Join Organization</h1>
-                <p className="text-muted-foreground">
-                    You have been invited to join <strong>{invitation.organization.name}</strong> as a <strong>{invitation.role}</strong>.
-                </p>
-            </div>
-            
-            <form action={acceptAction}>
-                <Button className="w-full" size="lg">Accept Invitation</Button>
-            </form>
+    <div className='container flex items-center justify-center min-h-screen py-8'>
+      <Card className='w-full max-w-md mx-auto'>
+        <CardHeader>
+          <CardTitle>Accept Invitation</CardTitle>
+          <CardDescription>
+            You have been invited to join an organization.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className='space-y-4'>
+            <Button
+              variant='outline'
+              type='button'
+              className='w-full'
+              onClick={onGoogleAccept}
+              disabled={isPending}
+            >
+              Accept with Google
+            </Button>
 
-            <div className="text-sm text-muted-foreground">
-                Logged in as {user.email}
+            <div className='relative my-4'>
+              <div className='absolute inset-0 flex items-center'>
+                <span className='w-full border-t' />
+              </div>
+              <div className='relative flex justify-center text-xs uppercase'>
+                <span className='bg-background px-2 text-muted-foreground'>
+                  Or set a password
+                </span>
+              </div>
             </div>
-        </div>
+
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className='space-y-4'
+              >
+                <FormField
+                  control={form.control}
+                  name='password'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type='password'
+                          placeholder='******'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button type='submit' className='w-full' disabled={isPending}>
+                  {isPending && (
+                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                  )}
+                  Accept & Create Account
+                </Button>
+              </form>
+            </Form>
+          </div>
+        </CardContent>
+      </Card>
     </div>
-  );
+  )
 }

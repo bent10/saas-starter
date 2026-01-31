@@ -8,27 +8,68 @@ const intlMiddleware = createMiddleware({
 });
 
 export default async function middleware(request: NextRequest) {
-  const { response: supabaseResponse, user } = await updateSession(request);
-
+  const { response: supabaseResponse, user, supabase } = await updateSession(request);
   const path = request.nextUrl.pathname;
-  
+
   // Basic route protection logic
-  // Adjust regex to match your locale pattern and protected routes
   const isProtected = /\/(dashboard|create-org|account)/.test(path);
-  const isAuthPage = /\/(login|register)/.test(path);
+  const isAuthPage = /\/(login|register|forgot-password|reset-password)/.test(path);
+  const isVerifyPage = /\/verify/.test(path);
+
+  if (user) {
+      // Check for Banned Status
+      const { data: profile } = await supabase
+          .from('profiles')
+          .select('status')
+          .eq('id', user.id)
+          .single();
+      
+      if (profile?.status === 'BANNED') {
+          // Allow access to a banned page or force logout?
+          // For now, let's redirect to a banned page if not already there, 
+          // or return 403.
+          // Since we don't have a /banned page in tasks, we'll redirect to a generic error or logout.
+          // But logout needs an action.
+          // We can redirect to /login?error=banned
+          if (!path.includes('/login')) {
+             const url = request.nextUrl.clone();
+             url.pathname = '/en/login';
+             url.searchParams.set('error', 'banned');
+             // We should probably sign them out, but we can't easily do that in middleware 
+             // without clearing cookies manually which updateSession does partially.
+             return NextResponse.redirect(url);
+          }
+      }
+
+      // Check for MFA
+      const { data: mfaData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (mfaData && mfaData.nextLevel === 'aal2' && mfaData.currentLevel === 'aal1') {
+          if (!isVerifyPage) {
+              const url = request.nextUrl.clone();
+              url.pathname = '/en/verify';
+              return NextResponse.redirect(url);
+          }
+      }
+  }
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
-    // Default to 'en' if not present, but usually intlMiddleware handles this.
-    // For redirect, we'll force /en/login for now or respect current locale.
     url.pathname = '/en/login'; 
     return NextResponse.redirect(url);
   }
 
-  if (isAuthPage && user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/en/dashboard';
-    return NextResponse.redirect(url);
+  if ((isAuthPage || isVerifyPage) && user) {
+     // If user is AAL2 (verified) or doesn't need MFA, redirect to dashboard from auth pages
+     // But if they are on /verify and NEED MFA, let them stay (handled above).
+     // If they are on /verify and DON'T need MFA, redirect to dashboard.
+      const { data: mfaData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      const needsMFA = mfaData?.nextLevel === 'aal2' && mfaData?.currentLevel === 'aal1';
+
+      if (!needsMFA) {
+        const url = request.nextUrl.clone();
+        url.pathname = '/en/dashboard';
+        return NextResponse.redirect(url);
+      }
   }
 
   const response = intlMiddleware(request);
@@ -42,5 +83,5 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next|.*\\..*).*)']
+  matcher: ['/((?!api|_next|.*\..*).*)']
 };

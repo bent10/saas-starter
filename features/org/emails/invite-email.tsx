@@ -5,6 +5,7 @@ import {
   Head,
   Heading,
   Html,
+  Link,
   Preview,
   Section,
   Text,
@@ -13,31 +14,37 @@ import {
 import * as React from 'react';
 
 interface InviteEmailProps {
-  invitedByEmail: string;
-  teamName: string;
-  inviteLink: string;
+  username?: string;
+  invitedByUsername?: string;
+  invitedByEmail?: string;
+  teamName?: string;
+  inviteLink?: string;
 }
 
 export const InviteEmail = ({
-  invitedByEmail = 'user@example.com',
+  username,
+  invitedByUsername = 'Someone',
+  invitedByEmail = 'someone@example.com',
   teamName = 'My Team',
   inviteLink = 'https://example.com/invite/token',
 }: InviteEmailProps) => {
+  const previewText = `Join ${invitedByUsername} on ${teamName}`;
+
   return (
     <Html>
       <Head />
-      <Preview>Join {teamName} on SaaS Starter</Preview>
+      <Preview>{previewText}</Preview>
       <Tailwind>
         <Body className="bg-white my-auto mx-auto font-sans">
           <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">
             <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-              Join <strong>{teamName}</strong>
+              Join <strong>{teamName}</strong> on <strong>SaaS Starter</strong>
             </Heading>
             <Text className="text-black text-[14px] leading-[24px]">
-              Hello,
+              Hello {username || 'there'},
             </Text>
             <Text className="text-black text-[14px] leading-[24px]">
-              <strong>{invitedByEmail}</strong> has invited you to join the <strong>{teamName}</strong> team.
+              <strong>{invitedByUsername}</strong> ({invitedByEmail}) has invited you to the <strong>{teamName}</strong> team on <strong>SaaS Starter</strong>.
             </Text>
             <Section className="text-center mt-[32px] mb-[32px]">
               <Button
@@ -48,10 +55,10 @@ export const InviteEmail = ({
               </Button>
             </Section>
             <Text className="text-black text-[14px] leading-[24px]">
-              or copy and paste this URL into your browser: <br />
-              <a href={inviteLink} className="text-blue-600 no-underline">
+              or copy and paste this URL into your browser:{" "}
+              <Link href={inviteLink} className="text-blue-600 no-underline">
                 {inviteLink}
-              </a>
+              </Link>
             </Text>
           </Container>
         </Body>

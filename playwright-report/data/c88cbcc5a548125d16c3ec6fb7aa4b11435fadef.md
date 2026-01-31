@@ -1,0 +1,45 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e6] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e7]:
+      - img [ref=e8]
+    - generic [ref=e11]:
+      - button "Open issues overlay" [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e14]: "0"
+          - generic [ref=e15]: "1"
+        - generic [ref=e16]: Issue
+      - button "Collapse issues badge" [ref=e17]:
+        - img [ref=e18]
+  - generic [ref=e21]:
+    - generic [ref=e22]:
+      - generic [ref=e23]: Create an account
+      - generic [ref=e24]: Enter your email below to create your account
+    - generic [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - generic [ref=e28]: Full Name
+          - textbox "Full Name" [ref=e29]:
+            - /placeholder: John Doe
+        - generic [ref=e30]:
+          - generic [ref=e31]: Email
+          - textbox "Email" [ref=e32]:
+            - /placeholder: m@example.com
+            - text: test-1769841847941@example.com
+        - generic [ref=e33]:
+          - generic [ref=e34]: Password
+          - textbox "Password" [active] [ref=e35]:
+            - /placeholder: "******"
+            - text: password123
+          - paragraph [ref=e36]: Password must contain at least one uppercase letter
+        - button "Sign Up" [ref=e37]
+      - generic [ref=e42]: Or continue with
+      - button "Google" [ref=e43]
+    - generic [ref=e45]:
+      - text: Already have an account? Sign in
+      - link "Sign in" [ref=e46] [cursor=pointer]:
+        - /url: /en/login
+  - alert [ref=e47]
+```

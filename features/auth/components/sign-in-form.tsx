@@ -26,7 +26,7 @@ import {
   CardFooter
 } from '@/shared/components/ui/card'
 import { Loader2 } from 'lucide-react'
-import Link from 'next/link'
+import { Link } from '@/shared/lib/navigation'
 import { toast } from 'sonner'
 
 export function SignInForm() {

@@ -88,6 +88,8 @@ Patuhi dengan ketat aturan yang didefinisikan dalam `.specify/memory/constitutio
 - PostgreSQL (Supabase), Supabase Storage. (001-saas-starter-core)
 - TypeScript v5 (Strict Mode) + Next.js 16.1.4, Supabase Client, Drizzle ORM, Zod, React Email, Resend (002-auth-enhancement)
 - TypeScript v5 (Strict Mode) + Supabase SSR, Drizzle ORM, Zod, React Email, Resend, shadcn/ui (002-auth-enhancement)
+- TypeScript v5 (Strict Mode) + Next.js v16.1.4 (App Router), Supabase Auth, next-intl (004-fix-auth-redirects)
+- Supabase (PostgreSQL) - User sessions managed by Supabase Auth (004-fix-auth-redirects)
 
 ## Recent Changes
 - 001-saas-starter-core: Added TypeScript v5 (Strict), Node.js (ESM) + Next.js 16.1.4 (App Router), Supabase (Auth, DB, Storage), Drizzle ORM, Zod, Stripe, React Email/Resend, next-intl, Playwright.

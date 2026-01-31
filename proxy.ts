@@ -1,15 +1,18 @@
 import createMiddleware from 'next-intl/middleware';
 import { updateSession } from '@/shared/lib/supabase/middleware';
 import { NextRequest, NextResponse } from 'next/server';
+import { routing } from '@/shared/lib/navigation';
 
-const intlMiddleware = createMiddleware({
-  locales: ['en'],
-  defaultLocale: 'en'
-});
+const intlMiddleware = createMiddleware(routing);
 
 export default async function middleware(request: NextRequest) {
   const { response: supabaseResponse, user, supabase } = await updateSession(request);
   const path = request.nextUrl.pathname;
+
+  // Extract locale from path
+  const pathSegments = path.split('/');
+  const firstSegment = pathSegments[1];
+  const validLocale = routing.locales.includes(firstSegment as any) ? firstSegment : routing.defaultLocale;
 
   // Basic route protection logic
   const isProtected = /\/(dashboard|create-org|account)/.test(path);
@@ -33,7 +36,7 @@ export default async function middleware(request: NextRequest) {
           // We can redirect to /login?error=banned
           if (!path.includes('/login')) {
              const url = request.nextUrl.clone();
-             url.pathname = '/en/login';
+             url.pathname = `/${validLocale}/login`;
              url.searchParams.set('error', 'banned');
              // We should probably sign them out, but we can't easily do that in middleware 
              // without clearing cookies manually which updateSession does partially.
@@ -46,7 +49,7 @@ export default async function middleware(request: NextRequest) {
       if (mfaData && mfaData.nextLevel === 'aal2' && mfaData.currentLevel === 'aal1') {
           if (!isVerifyPage) {
               const url = request.nextUrl.clone();
-              url.pathname = '/en/verify';
+              url.pathname = `/${validLocale}/verify`;
               return NextResponse.redirect(url);
           }
       }
@@ -54,7 +57,7 @@ export default async function middleware(request: NextRequest) {
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
-    url.pathname = '/en/login'; 
+    url.pathname = `/${validLocale}/login`; 
     return NextResponse.redirect(url);
   }
 
@@ -67,7 +70,7 @@ export default async function middleware(request: NextRequest) {
 
       if (!needsMFA) {
         const url = request.nextUrl.clone();
-        url.pathname = '/en/dashboard';
+        url.pathname = `/${validLocale}/dashboard`;
         return NextResponse.redirect(url);
       }
   }

@@ -7,6 +7,7 @@ import { db } from "@/shared/lib/db/drizzle";
 import { profiles } from "@/shared/lib/db/schema";
 import { signUpSchema, signInSchema, updatePasswordSchema, resetPasswordSchema } from "../schemas";
 import { z } from "zod";
+import { getLocale } from "next-intl/server";
 
 export async function signUp(data: z.infer<typeof signUpSchema>) {
   const supabase = await createClient();
@@ -51,6 +52,7 @@ export async function signUp(data: z.infer<typeof signUpSchema>) {
 export async function signIn(data: z.infer<typeof signInSchema>) {
   const supabase = await createClient();
   const validation = signInSchema.safeParse(data);
+  const locale = await getLocale();
 
   if (!validation.success) {
     return { error: "Invalid data" };
@@ -68,20 +70,21 @@ export async function signIn(data: z.infer<typeof signInSchema>) {
   }
 
   revalidatePath("/", "layout");
-  redirect("/dashboard");
+  redirect(`/${locale}/dashboard`);
 }
 
 export async function signInWithGoogle() {
   const supabase = await createClient();
+  const locale = await getLocale();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/callback`,
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/callback?next=/${locale}/dashboard`,
     },
   });
 
   if (error) {
-    redirect("/login?error=oauth");
+    redirect(`/${locale}/login?error=oauth`);
   }
 
   if (data.url) {
@@ -91,9 +94,10 @@ export async function signInWithGoogle() {
 
 export async function signOutAction() {
   const supabase = await createClient();
+  const locale = await getLocale();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
-  redirect("/login");
+  redirect(`/${locale}/login`);
 }
 
 export async function resetPassword(data: z.infer<typeof resetPasswordSchema>) {

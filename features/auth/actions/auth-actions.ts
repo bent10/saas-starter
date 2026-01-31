@@ -1,192 +1,139 @@
-'use server';
+'use server'
 
-import { createClient } from '@/shared/lib/supabase/server';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
-import { getLocale } from 'next-intl/server';
-import { signUpSchema, signInSchema, forgotPasswordSchema, updatePasswordSchema } from '../schemas';
-import { logAudit } from '@/shared/lib/audit';
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@/shared/lib/supabase/server";
+import { db } from "@/shared/lib/db/drizzle";
+import { profiles } from "@/shared/lib/db/schema";
+import { signUpSchema, signInSchema, updatePasswordSchema, resetPasswordSchema } from "../schemas";
+import { z } from "zod";
 
-export type AuthState = {
-  success: boolean;
-  message?: string;
-  errors?: Record<string, string[]>;
-};
+export async function signUp(data: z.infer<typeof signUpSchema>) {
+  const supabase = await createClient();
+  const validation = signUpSchema.safeParse(data);
 
-export async function signUp(prevState: AuthState, formData: FormData): Promise<AuthState> {
-  const validatedFields = signUpSchema.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      success: false,
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Invalid inputs',
-    };
+  if (!validation.success) {
+    return { error: "Invalid data" };
   }
 
-  const { email, password } = validatedFields.data;
-  const supabase = await createClient();
-  const locale = await getLocale();
-  
-  const origin = process.env.NEXT_PUBLIC_APP_URL || '';
+  const { email, password, fullName } = validation.data;
 
-  const { error } = await supabase.auth.signUp({
+  const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${origin}/${locale}/auth/callback`,
+      data: {
+        full_name: fullName,
+      },
     },
   });
 
-  if (error) {
-    return {
-      success: false,
-      message: error.message,
-    };
+  if (authError) {
+    return { error: authError.message };
   }
 
-  return {
-    success: true,
-    message: 'Check your email to confirm your account.',
-  };
+  if (authData.user) {
+    try {
+        await db.insert(profiles).values({
+            id: authData.user.id,
+            email: email,
+            username: email.split('@')[0] + '_' + Math.random().toString(36).substring(7),
+            fullName: fullName,
+        });
+    } catch (e) {
+        console.error("Failed to create profile:", e);
+    }
+  }
+
+  return { success: true };
 }
 
-export async function signIn(prevState: AuthState, formData: FormData): Promise<AuthState> {
-  const validatedFields = signInSchema.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-  });
+export async function signIn(data: z.infer<typeof signInSchema>) {
+  const supabase = await createClient();
+  const validation = signInSchema.safeParse(data);
 
-  if (!validatedFields.success) {
-    return {
-      success: false,
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Invalid inputs',
-    };
+  if (!validation.success) {
+    return { error: "Invalid data" };
   }
 
-  const { email, password } = validatedFields.data;
-  const supabase = await createClient();
+  const { email, password } = validation.data;
 
-  const { data: { user }, error } = await supabase.auth.signInWithPassword({
+  const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
   if (error) {
-    return {
-      success: false,
-      message: error.message,
-    };
+    return { error: error.message };
   }
 
-  if (user) {
-    await logAudit(user.id, 'SIGN_IN', { email });
-  }
-
-  const locale = await getLocale();
-  revalidatePath('/', 'layout');
-  redirect(`/${locale}/dashboard`);
+  revalidatePath("/", "layout");
+  redirect("/dashboard");
 }
 
-export async function signOut(): Promise<void> {
+export async function signInWithGoogle() {
   const supabase = await createClient();
-  await supabase.auth.signOut();
-  
-  const locale = await getLocale();
-  revalidatePath('/', 'layout');
-  redirect(`/${locale}/login`);
-}
-
-export async function forgotPassword(prevState: AuthState, formData: FormData): Promise<AuthState> {
-  const validatedFields = forgotPasswordSchema.safeParse({
-    email: formData.get('email'),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      success: false,
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Invalid email',
-    };
-  }
-
-  const { email } = validatedFields.data;
-  const supabase = await createClient();
-  const locale = await getLocale();
-  const origin = process.env.NEXT_PUBLIC_APP_URL || '';
-
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/${locale}/auth/update-password`,
-  });
-
-  if (error) {
-    return {
-      success: false,
-      message: error.message,
-    };
-  }
-
-  return {
-    success: true,
-    message: 'Check your email for the password reset link.',
-  };
-}
-
-export async function updatePassword(prevState: AuthState, formData: FormData): Promise<AuthState> {
-  const validatedFields = updatePasswordSchema.safeParse({
-    password: formData.get('password'),
-    confirmPassword: formData.get('confirmPassword'),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      success: false,
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Invalid passwords',
-    };
-  }
-
-  const { password } = validatedFields.data;
-  const supabase = await createClient();
-
-  const { error } = await supabase.auth.updateUser({
-    password,
-  });
-
-  if (error) {
-    return {
-      success: false,
-      message: error.message,
-    };
-  }
-
-  const locale = await getLocale();
-  revalidatePath('/', 'layout');
-  redirect(`/${locale}/dashboard`);
-}
-
-export async function signInWithProvider(provider: 'google' | 'github'): Promise<void> {
-  const supabase = await createClient();
-  const locale = await getLocale();
-  const origin = process.env.NEXT_PUBLIC_APP_URL || '';
-
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider,
+    provider: "google",
     options: {
-      redirectTo: `${origin}/${locale}/auth/callback`,
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/callback`,
     },
   });
 
   if (error) {
-    console.error('OAuth error:', error);
-    throw error;
+    redirect("/login?error=oauth");
   }
 
   if (data.url) {
     redirect(data.url);
   }
+}
+
+export async function signOut() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  revalidatePath("/", "layout");
+  redirect("/login");
+}
+
+export async function resetPassword(data: z.infer<typeof resetPasswordSchema>) {
+    const supabase = await createClient();
+    const validation = resetPasswordSchema.safeParse(data);
+
+    if (!validation.success) {
+        return { error: "Invalid email" };
+    }
+
+    const { email } = validation.data;
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/callback?next=/account/update-password`,
+    });
+
+    if (error) {
+        return { error: error.message };
+    }
+
+    return { success: true, message: "Password reset email sent" };
+}
+
+export async function updatePassword(data: z.infer<typeof updatePasswordSchema>) {
+    const supabase = await createClient();
+    const validation = updatePasswordSchema.safeParse(data);
+
+    if (!validation.success) {
+        return { error: "Invalid password" };
+    }
+
+    const { password } = validation.data;
+
+    const { error } = await supabase.auth.updateUser({
+        password: password
+    });
+
+    if (error) {
+        return { error: error.message };
+    }
+
+    return { success: true };
 }

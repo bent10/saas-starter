@@ -29,25 +29,25 @@ export function DashboardSidebar({
     {
       label: 'Dashboard',
       icon: LayoutDashboard,
-      href: `/${locale}/${currentOrgSlug}`,
-      active: pathname === `/${locale}/${currentOrgSlug}`,
+      href: `/${locale}/dashboard/${currentOrgSlug}`,
+      active: pathname === `/${locale}/dashboard/${currentOrgSlug}`,
     },
     {
       label: 'Members',
       icon: Users,
-      href: `/${locale}/${currentOrgSlug}/members`,
+      href: `/${locale}/dashboard/${currentOrgSlug}/members`,
       active: pathname.includes('/members'),
     },
     {
       label: 'Billing',
       icon: CreditCard,
-      href: `/${locale}/${currentOrgSlug}/billing`,
+      href: `/${locale}/dashboard/${currentOrgSlug}/billing`,
       active: pathname.includes('/billing'),
     },
     {
       label: 'Settings',
       icon: Settings,
-      href: `/${locale}/${currentOrgSlug}/settings`,
+      href: `/${locale}/dashboard/${currentOrgSlug}/settings`,
       active: pathname.includes('/settings'),
     },
   ];

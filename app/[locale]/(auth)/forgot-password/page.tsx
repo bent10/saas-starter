@@ -1,4 +1,4 @@
-import { SignUpForm } from '@/features/auth/components/sign-up-form'
+import { ForgotPasswordForm } from '@/features/auth/components/forgot-password-form'
 import { getTranslations } from 'next-intl/server'
 
 export async function generateMetadata({
@@ -10,10 +10,10 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: 'Auth' })
 
   return {
-    title: t('register_title')
+    title: t('forgot_password')
   }
 }
 
-export default function RegisterPage() {
-  return <SignUpForm />
+export default function ForgotPasswordPage() {
+  return <ForgotPasswordForm />
 }

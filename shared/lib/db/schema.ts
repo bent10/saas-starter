@@ -5,6 +5,8 @@ import { relations } from "drizzle-orm";
 export const roleEnum = pgEnum("role", ["OWNER", "MEMBER"]);
 export const subscriptionStatusEnum = pgEnum("subscription_status", ["active", "past_due", "canceled", "incomplete", "incomplete_expired", "trialing", "unpaid"]);
 export const planEnum = pgEnum("plan", ["FREE", "PRO", "ENTERPRISE"]);
+export const userStatusEnum = pgEnum("user_status", ["ACTIVE", "BANNED"]);
+export const invitationStatusEnum = pgEnum("invitation_status", ["PENDING", "ACCEPTED"]);
 
 // Auth Schema (Read-only reference)
 const authSchema = pgSchema("auth");
@@ -12,6 +14,26 @@ export const users = authSchema.table("users", {
   id: uuid("id").primaryKey(),
   email: text("email"),
 });
+
+// Profiles
+export const profiles = pgTable("profiles", {
+  id: uuid("id").primaryKey().references(() => users.id, { onDelete: "cascade" }),
+  email: text("email").notNull().unique(),
+  username: text("username").notNull().unique(),
+  fullName: text("full_name"),
+  avatarUrl: text("avatar_url"),
+  bio: text("bio"),
+  status: userStatusEnum("status").default("ACTIVE").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
+});
+
+export const profilesRelations = relations(profiles, ({ one }) => ({
+  user: one(users, {
+    fields: [profiles.id],
+    references: [users.id],
+  }),
+}));
 
 // Organizations
 export const organizations = pgTable("organizations", {
@@ -65,6 +87,7 @@ export const invitations = pgTable("invitations", {
   token: text("token").unique().notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   inviterId: uuid("inviter_id").notNull(), // References auth.users
+  status: invitationStatusEnum("status").default("PENDING").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
